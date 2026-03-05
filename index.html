@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Majestic OS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Inter', sans-serif; overflow: hidden; }
+
+        #fake-login {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #f7f8fa; z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; padding-top: 60px; overflow-y: auto;
+        }
+        .sparx-header { color: #351c75; font-size: 42px; font-weight: 700; margin-bottom: 30px; letter-spacing: -1px; }
+        .school-banner {
+            background: white; width: 480px; max-width: 90%;
+            border: 1px solid #e2e8f0; border-radius: 4px; padding: 16px 20px; margin-bottom: 16px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .school-text { font-size: 0.9rem; color: #475569; }
+        .school-name { display: block; font-weight: 700; color: #0f172a; margin-top: 2px; font-size: 1rem; }
+        .switch-link { color: #351c75; text-decoration: underline; font-size: 0.9rem; cursor: pointer; }
+        .login-box {
+            background: white; width: 480px; max-width: 90%; border: 1px solid #e2e8f0; border-radius: 8px;
+            padding: 30px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .login-title { font-size: 1.1rem; font-weight: 700; color: #0f172a; margin-bottom: 20px; }
+        .ms-login-btn {
+            background: #351c75; color: white; width: 100%; padding: 12px;
+            border-radius: 30px; border: none; font-weight: 600; font-size: 0.95rem;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            cursor: pointer; transition: background 0.2s; margin-bottom: 25px;
+        }
+        .ms-login-btn:hover { background: #241255; }
+        .ms-logo { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; width: 18px; height: 18px; }
+        .ms-sq { background: white; width: 100%; height: 100%; }
+        .divider { display: flex; align-items: center; text-align: center; color: #64748b; margin: 20px 0; font-size: 0.9rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid #e2e8f0; }
+        .divider::before { margin-right: 15px; } .divider::after { margin-left: 15px; }
+        .input-group { margin-bottom: 15px; }
+        .input-label { display: block; font-size: 0.9rem; color: #64748b; margin-bottom: 6px; font-weight: 600; }
+        .sparx-input { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 1rem; color: #334155; outline: none; }
+        .sparx-submit { width: 100%; padding: 12px; border-radius: 30px; border: none; background: #dcdbe6; color: white; font-weight: 600; font-size: 1rem; margin-top: 10px; cursor: default; }
+        .footer-links { margin-top: 25px; text-align: center; font-size: 0.9rem; }
+        .footer-links a { color: #351c75; text-decoration: underline; margin: 0 5px; cursor: pointer; }
+
+        :root {
+            --bg-color: #0f172a; --sidebar-bg: rgba(15, 23, 42, 0.95); --content-bg: rgba(30, 41, 59, 0.7);
+            --text-color: #e2e8f0; --accent-color: #8b5cf6; --glass-border: rgba(255, 255, 255, 0.1);
+            --animation-speed: 0.2s;
+        }
+        body.theme-galaxy { background: radial-gradient(ellipse at bottom,#1b2735 0%,#090a0f 100%); color: var(--text-color); }
+        body.theme-dark-nebula { --bg-color: #0d0d1a; --sidebar-bg: rgba(29,13,46,0.95); --content-bg: rgba(46,20,68,0.7); --text-color: #f0f4ff; --accent-color: #db2777; --glass-border: rgba(251,113,133,0.3); background: radial-gradient(ellipse at bottom,#3b0764 0%,#0d0d1a 100%); color: var(--text-color); }
+        body.theme-matte { --bg-color: #18181b; --sidebar-bg: #18181b; --content-bg: #27272a; --text-color: #d4d4d8; --accent-color: #a1a1aa; --glass-border: rgba(255,255,255,0.1); background: var(--bg-color); color: var(--text-color); }
+        body.theme-light { --bg-color: #f8fafc; --sidebar-bg: #fff; --content-bg: #f1f5f9; --text-color: #334155; --accent-color: #3b82f6; --glass-border: #e2e8f0; background: var(--bg-color); color: var(--text-color); }
+        body.theme-neon { --bg-color: #000; --sidebar-bg: #111; --content-bg: #000; --text-color: #0ff; --accent-color: #0ff; --glass-border: #0ff; background: #000; color: #0ff; }
+        body.theme-galaxy-void { --bg-color: #020420; --sidebar-bg: rgba(20,20,40,0.98); --content-bg: rgba(30,30,60,0.8); --text-color: #e0f2fe; --accent-color: #a78bfa; --glass-border: rgba(167,139,250,0.2); background: radial-gradient(ellipse at bottom,#07153a 0%,#020420 100%); color: var(--text-color); }
+        body.theme-cyber-night { --bg-color: #1f2937; --sidebar-bg: rgba(31,41,55,0.95); --content-bg: rgba(55,65,81,0.7); --text-color: #e5e7eb; --accent-color: #00ffff; --glass-border: rgba(0,255,255,0.3); background: #1f2937; color: var(--text-color); }
+        body.theme-minimal-white { --bg-color: #fff; --sidebar-bg: #fff; --content-bg: #f9fafb; --text-color: #1f2937; --accent-color: #1f2937; --glass-border: #e5e7eb; background: #fff; color: #1f2937; }
+        body.theme-frost { --bg-color: #f0f9ff; --sidebar-bg: rgba(255,255,255,0.9); --content-bg: #e0f2ff; --text-color: #1e3a8a; --accent-color: #60a5fa; --glass-border: #bfdbfe; background: #f0f9ff; color: #1e3a8a; }
+        body.theme-retro-arcade { --bg-color: #101010; --sidebar-bg: #101010; --content-bg: #202020; --text-color: #fff000; --accent-color: #ff00ff; --glass-border: #ff00ff; background: #101010; color: #fff000; }
+        body.theme-console-os { --bg-color: #0c1a2c; --sidebar-bg: rgba(12,26,44,0.95); --content-bg: rgba(22,38,59,0.8); --text-color: #d1d5db; --accent-color: #34d399; --glass-border: rgba(52,211,153,0.2); background: #0c1a2c; color: var(--text-color); }
+        body.theme-ai-core { --bg-color: #000; --sidebar-bg: rgba(20,0,30,0.95); --content-bg: rgba(30,0,50,0.8); --text-color: #c084fc; --accent-color: #c084fc; --glass-border: rgba(192,132,252,0.3); background: #000; color: #c084fc; }
+        body.theme-quantum { --bg-color: #1f003b; --sidebar-bg: rgba(31,0,59,0.95); --content-bg: rgba(50,20,70,0.8); --text-color: #e9d5ff; --accent-color: #c4b5fd; --glass-border: rgba(196,181,253,0.2); background: #1f003b; color: var(--text-color); }
+        body.theme-crimson { --bg-color: #000; --sidebar-bg: #1a0000; --content-bg: #330000; --text-color: #fca5a5; --accent-color: #f87171; --glass-border: rgba(248,113,113,0.2); background: #000; color: #fca5a5; }
+        body.theme-ocean-blue { --bg-color: #0f172a; --sidebar-bg: rgba(22,101,196,0.9); --content-bg: rgba(30,58,138,0.8); --text-color: #e0f7fa; --accent-color: #2dd4bf; --glass-border: rgba(45,212,191,0.3); background: linear-gradient(135deg,#1e3a8a 0%,#0369a1 100%); color: var(--text-color); }
+        body.theme-performance-mode { --bg-color: #000; --sidebar-bg: #000; --content-bg: #000; --text-color: #fff; --accent-color: #fff; --glass-border: #1f2937; background: #000; color: #fff; --animation-speed: 0s; }
+
+        .card, .nav-item { transition: transform var(--animation-speed), box-shadow var(--animation-speed), background var(--animation-speed); }
+        #stars-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+        .star { position: absolute; background: var(--text-color); border-radius: 50%; animation: twinkle var(--duration) infinite ease-in-out; }
+        @keyframes twinkle { 0%,100% { opacity: 0.3; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+
+        #majestic-os { display: none; width: 100%; height: 100%; flex-direction: row; }
+        .sidebar { width: 220px; display: flex; flex-direction: column; background: var(--sidebar-bg); border-right: 1px solid var(--glass-border); backdrop-filter: blur(10px); z-index: 10; padding: 20px 0; }
+        .sidebar-header { padding: 0 24px 20px; font-weight: 800; font-size: 1.2rem; color: var(--accent-color); }
+        .nav-item { padding: 12px 24px; cursor: pointer; font-size: 0.95rem; font-weight: 500; color: var(--text-color); opacity: 0.7; border-left: 3px solid transparent; }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.05); opacity: 1; border-left-color: var(--accent-color); }
+        .sidebar-footer { margin-top: auto; padding: 20px; }
+        .panic-btn-mini { width: 100%; padding: 10px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; }
+        .main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        .top-bar { height: 60px; display: flex; align-items: center; padding: 0 24px; background: rgba(0,0,0,0.1); border-bottom: 1px solid var(--glass-border); }
+        .universal-search { flex: 1; max-width: 600px; }
+        .search-input { width: 100%; background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border); padding: 10px 16px; border-radius: 20px; color: var(--text-color); outline: none; }
+        .view-section { display: none; flex: 1; overflow-y: auto; padding: 24px; animation: fadeIn 0.2s ease; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding-bottom: 40px; }
+        .card { background: var(--content-bg); border-radius: 12px; overflow: hidden; aspect-ratio: 1/1.2; border: 1px solid var(--glass-border); cursor: pointer; display: flex; flex-direction: column; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 10px 15px rgba(0,0,0,0.3); }
+        .card-image-container { flex: 1; width: 100%; overflow: hidden; background: #000; }
+        .card-icon { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s; }
+        .card:hover .card-icon { transform: scale(1.05); }
+        .card-info { background: var(--sidebar-bg); padding: 10px 12px; border-top: 1px solid var(--glass-border); flex-shrink: 0; }
+        .card-title { font-weight: 700; font-size: 0.95rem; color: var(--text-color); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-tag { font-size: 0.7rem; color: var(--accent-color); font-weight: 500; opacity: 0.8; }
+        .local-search { width: 100%; margin-bottom: 20px; background: rgba(0,0,0,0.2); border: 1px solid var(--glass-border); padding: 12px 16px; border-radius: 8px; color: var(--text-color); outline: none; font-size: 0.95rem; }
+        .local-search::placeholder { color: rgba(255,255,255,0.3); }
+        .theme-button-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+        .theme-button { padding: 8px; background: var(--content-bg); border: 1px solid var(--glass-border); color: var(--text-color); border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+        .theme-button:hover { border-color: var(--accent-color); }
+        .setting-group { margin-bottom: 24px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 8px; border: 1px solid var(--glass-border); }
+        .setting-title { font-weight: 700; margin-bottom: 12px; display: block; color: var(--text-color); font-size: 1rem; }
+        #iframe-viewer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50; display: none; flex-direction: column; }
+        .viewer-controls { height: 40px; background: #111; display: flex; align-items: center; padding: 0 16px; justify-content: space-between; }
+        .viewer-close { background: #333; color: white; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; }
+        #main-iframe { width: 100%; flex: 1; border: none; }
+    </style>
+</head>
+<body class="theme-galaxy">
+<div id="stars-container"></div>
+
+<div id="fake-login">
+    <div class="sparx-header">Sparx Reader</div>
+    <div class="school-banner">
+        <div><span class="school-text">You are logging into:</span><span class="school-name">The Westleigh School</span></div>
+        <span class="switch-link">Switch school</span>
+    </div>
+    <div class="login-box">
+        <div class="login-title">Log in as a student or teacher</div>
+        <button class="ms-login-btn" onclick="unlockOS()">
+            <div class="ms-logo"><div class="ms-sq"></div><div class="ms-sq"></div><div class="ms-sq"></div><div class="ms-sq"></div></div>
+            Log in to Sparx using Microsoft
+        </button>
+        <div class="divider">or</div>
+        <div class="login-title" style="font-size:1rem;margin-bottom:15px;">Use your Sparx login</div>
+        <div class="input-group"><label class="input-label">Username:</label><input type="text" class="sparx-input" placeholder="sparxuser10"></div>
+        <div class="input-group"><label class="input-label">Password:</label><input type="password" class="sparx-input" placeholder="Password"></div>
+        <button class="sparx-submit" onclick="unlockOS()">Log in</button>
+    </div>
+    <div class="footer-links"><a>New student?</a> | <a>Forgot login details?</a></div>
+</div>
+
+<div id="majestic-os">
+    <div class="sidebar">
+        <div class="sidebar-header">MAJESTIC OS</div>
+        <div class="nav-item active" onclick="switchTab('apps',this)">Apps</div>
+        <div class="nav-item" onclick="switchTab('games',this)">Games</div>
+        <div class="nav-item" onclick="switchTab('settings',this)">Settings</div>
+        <div class="sidebar-footer"><button class="panic-btn-mini" onclick="panic()">PANIC (ESC)</button></div>
+    </div>
+    <div class="main-area">
+        <div class="top-bar">
+            <div class="universal-search">
+                <input type="text" id="omni-search" class="search-input" placeholder="Search Google or type URL..." onkeypress="handleSearch(event)">
+            </div>
+            <div style="margin-left:20px;font-size:0.9rem;opacity:0.7;" id="clock">12:00</div>
+        </div>
+
+        <div id="tab-apps" class="view-section active">
+            <h2 style="margin-bottom:15px;font-weight:300;">Applications</h2>
+            <input type="text" id="search-apps" class="local-search" placeholder="Filter apps..." onkeyup="filterGrid('search-apps','apps-grid')">
+            <div class="grid-container" id="apps-grid"></div>
+        </div>
+
+        <div id="tab-games" class="view-section">
+            <h2 style="margin-bottom:15px;font-weight:300;">Library</h2>
+            <input type="text" id="search-games" class="local-search" placeholder="Filter games..." onkeyup="filterGrid('search-games','games-grid')">
+            <div class="grid-container" id="games-grid"></div>
+        </div>
+
+        <div id="tab-settings" class="view-section">
+            <h2 style="margin-bottom:20px;">System Settings</h2>
+            <div class="setting-group">
+                <span class="setting-title">Appearance</span>
+                <div class="theme-button-container">
+                    <button class="theme-button" onclick="setTheme('galaxy')">Galaxy</button>
+                    <button class="theme-button" onclick="setTheme('dark-nebula')">Dark Nebula</button>
+                    <button class="theme-button" onclick="setTheme('matte')">Matte</button>
+                    <button class="theme-button" onclick="setTheme('light')">Light</button>
+                    <button class="theme-button" onclick="setTheme('neon')">Neon</button>
+                    <button class="theme-button" onclick="setTheme('galaxy-void')">Galaxy Void</button>
+                    <button class="theme-button" onclick="setTheme('cyber-night')">Cyber Night</button>
+                    <button class="theme-button" onclick="setTheme('minimal-white')">Minimal White</button>
+                    <button class="theme-button" onclick="setTheme('frost')">Frost</button>
+                    <button class="theme-button" onclick="setTheme('retro-arcade')">Retro Arcade</button>
+                    <button class="theme-button" onclick="setTheme('console-os')">Console OS</button>
+                    <button class="theme-button" onclick="setTheme('ai-core')">AI Core</button>
+                    <button class="theme-button" onclick="setTheme('timeout')">Quantum</button>
+                    <button class="theme-button" onclick="setTheme('crimson')">Crimson</button>
+                    <button class="theme-button" onclick="setTheme('ocean-blue')">Ocean Blue</button>
+                    <button class="theme-button" onclick="setTheme('performance-mode')">Performance Mode</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="iframe-viewer">
+    <div class="viewer-controls">
+        <span style="color:white;font-size:0.9rem;" id="viewer-title">App</span>
+        <button class="viewer-close" onclick="closeViewer()">Close X</button>
+    </div>
+    <iframe id="main-iframe" src="about:blank" allowfullscreen sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms"></iframe>
+</div>
+
+<script>
+    const apps = [
+        { name: "Google",  url: "https://www.google.com/webhp?igu=1", img: "https://static.dezeen.com/uploads/2025/05/sq-google-g-logo-update_dezeen_2364_col_0.jpg", tag: "#search" },
+        { name: "TikTok",  url: "https://www.tiktok.com", img: "https://sf-tb-sg.ibytedtos.com/obj/eden-sg/uhtyvueh7nulogpoguhm/tiktok-icon2.png", tag: "#social" },
+        { name: "Discord", url: "https://discord.com/app", img: "https://static.vecteezy.com/system/resources/previews/006/892/625/non_2x/discord-logo-icon-editorial-free-vector.jpg", tag: "#chat" },
+        { name: "Spotify", url: "https://open.spotify.com", img: "https://www.logo.wine/a/logo/Spotify/Spotify-Icon-White-Dark-Background-Logo.wine.svg", tag: "#music" },
+        { name: "YouTube", url: "https://www.youtube.com/embed/te2rzrLqxm8?si=CHErdY6425ULmlO6", img: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/YouTube_play_button_square_%282013-2017%29.svg/960px-YouTube_play_button_square_%282013-2017%29.svg.png", tag: "#video" }
+    ];
+
+    const games = [
+        { 
+            name: "Moto X3M 2", 
+            isBlob: true,
+            content: `
+            <base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@main/moto2/">
+            <html lang="en">
+            <head>
+            <meta charset="utf-8" />
+            <meta http-equiv="x-ua-compatible" content="ie=edge">
+            <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, shrink-to-fit=no" />
+            <link rel="stylesheet" href="./assets/css/app.css" type="text/css" />
+            <title>Moto X3M 2 Unblocked</title>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            <style>body{margin:0;overflow:hidden;background:#000}</style>
+            </head>
+            <body>
+            <div id="content"></div>
+            <div id="orientation"></div>
+            <div id="loader">Loading ...</div>
+            <script type="text/javascript" src="./assets/box2dweb/nape.min.js"><\/script>
+            <script type="text/javascript" src="./assets/box2dweb/nape-debug-draw.min.js"><\/script>
+            <script type="text/javascript" src="./assets/box2dweb/jquery-3.1.1.min.js"><\/script>
+            <script type="text/javascript" src="./assets/box2dweb/easeljs-0.8.2.combined.js"><\/script>
+            <script type="text/javascript" src="./assets/box2dweb/bluebird.min.js"><\/script>
+            <script type="text/javascript" src="./motox3m2.min.js?1489d20b164b3a2d04c4"><\/script>
+            </body>
+            </html>`, 
+            img: "https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/90601f70-d867-42f2-8c9a-cc91880f0bc9.png", 
+            tag: "#racing" 
+        },
+        { 
+            name: "Geometry Dash Lite", 
+            isBlob: true, 
+            content: `
+<html lang="en-US">
+<head>
+  <base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@main/gdlite/">
+    <title>Geometry Dash</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        html { box-sizing: border-box; }
+        *, *:before, *:after { box-sizing: inherit; }
+        body { margin: 0; background-image: linear-gradient(rgb(0, 0, 0), rgb(0, 102, 255)); overflow: hidden; }
+        #gameContainer { width: 100vw; height: 100vh; }
+        canvas { width: 100%; height: 100%; display: block; }
+        #loader { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background-image: linear-gradient(rgb(0, 0, 0), rgb(0, 102, 255)); }
+        .logo { position: absolute; max-width: 100vw; max-height: 70vh; top: 300px; }
+        .pos_progress { position: absolute; bottom: 15%; width: 100%; }
+        .progress { margin: 1.5em auto; max-width: 436px; height: auto; display: none; position: relative; }
+        .full { width: 97%; transform-origin: top left; }
+        .box_process { width: 100%; }
+        .progress .posfull, .progress .posbox { position: absolute; display: flex; align-items: center; justify-content: center; }
+        .progress .posfull { top: 8px; z-index: 1; }
+        .progress .posbox { top: 0; z-index: 2; }
+    </style>
+</head>
+<body>
+    <div id="gameContainer"></div>
+    <div id="loader"><img class="logo" src="image/loading.png?v=1">
+        <div class=" pos_progress">
+            <div class="progress">
+                <div class="posfull"><img class="full" src="image/process_bar_back.png"></div>
+                <div class="posbox"><img class="box_process" src="image/process_bar_front.png"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+      window.fileMergerConfig = {
+        files: [
+          { name: 'GeometryDashLite.data.unityweb', parts: 2 },
+          { name: 'GeometryDashLite.wasm.code.unityweb', parts: 1 },
+          { name: 'GeometryDashLite.wasm.framework.unityweb', parts: 1 },
+        ],
+        basePath: 'Build/',
+        debug: true
+      };  
+    <\/script>
+    <script src="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@ac5cdfc0042aca584e72619375b4aca948a9243c/merge.js"><\/script>
+    <script src="Build/UnityLoader.js"><\/script>
+    <script>
+        var gameInstance = UnityLoader.instantiate("gameContainer", "Build/GeometryDashLite.json", {
+            onProgress: UnityProgress
+        });
+        function UnityProgress(gameInstance, progress) {
+            if (!gameInstance.Module) return;
+            const loader = document.querySelector("#loader");
+            if (!gameInstance.progress) {
+                const progDiv = document.querySelector("#loader .progress");
+                progDiv.style.display = "block";
+                gameInstance.progress = progDiv.querySelector(".full");
+            }
+            gameInstance.progress.style.transform = "scaleX(" + progress + ")";
+            if (progress === 1 && !gameInstance.removeTimeout) {
+                gameInstance.removeTimeout = setTimeout(function() {
+                    loader.style.display = "none";
+                }, 2000);
+            }
+        }
+    <\/script>
+</body>
+</html>`,
+            img: "https://upload.wikimedia.org/wikipedia/en/3/35/Geometry_Dash_Logo.PNG", 
+            tag: "#rhythm" 
+        },
+        { 
+            name: "Stick Merge", 
+            isBlob: true, 
+            content: `
+            <!DOCTYPE html>
+            <html style="height: 100%;">
+            <base href="https://cdn.jsdelivr.net/gh/bubbls/UGS-Assets@bba3c3c4e71662c9d41dea31e564fa9952c123af/stick%20merge/">
+            <head>
+              <meta charset="utf-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+              <link rel="stylesheet" href="css/stylesheet.css" type="text/css">
+              <script src="poki-sdk.js"><\/script>
+              <script src="js/webfont.js"><\/script>
+              <script src="js/phaser.min.js"><\/script>
+              <script src="js/SpinePlugin.min.js"><\/script>
+              <script src="js/plugin-api-poki.js"><\/script>
+              <script src="js/HorizontalSlider.js"><\/script>
+              <script src="js/Buttons.js"><\/script>
+              <style>body { margin: 0; padding: 0; background: #000; overflow: hidden; height: 100%; }</style>
+            </head>
+            <body>
+              <div id="game-container" style="width: 100%; height: 100%;"></div>
+              <script src="js/m.js"><\/script>
+            </body>
+            </html>`,
+            img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr1XdvtwLSnghB4SFkrrD6cOWKV9Bl_tSbcw&s", 
+            tag: "#action" 
+        },
+        { 
+            name: "Stickman Hook", 
+            isBlob: true, 
+            content: `
+            <!DOCTYPE html>
+            <html>
+              <head>
+                <base href="https://cdn.jsdelivr.net/gh/genizy/google-class@cd06df26d3c4d9f73c8151fc13f7b2dc27f3adda/stickman-hook/">
+                <meta charset="utf-8" />
+                <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+                <style>
+                  html, body {
+                    position: absolute; top: 0px; left: 0px; margin: 0; padding: 0; border: 0;
+                    overflow: hidden; width: 100vw; height: 100vh; background: #000;
+                  }
+                  canvas { width: 100%; height: 100%; object-fit: contain; }
+                </style>
+                <script src="poki3.js"><\/script>
+              </head>
+              <body>
+                <script src="bundle.js"><\/script>
+              </body>
+            </html>`, 
+            img: "https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/99e090d154caf30f3625df7e456d5984/stickman-hook.png", 
+            tag: "#physics" 
+        },
+        { 
+            name: "Subway Surfers Zurich", 
+            isBlob: true, 
+            content: `
+            <base href="https://cdn.jsdelivr.net/gh/bubbls/subwaysurfersmerge/">
+            <html>
+                <head>
+                <meta charset="utf-8" />
+                <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+                <title>Subway Surfers</title>  
+                <script src="4399.z.js"><\/script>
+                <script>
+                    window.config = {
+                        loader: "unity",
+                        debug: false,
+                        maxRatio: 16 / 9,
+                        minRatio: 9 / 16,
+                        title: 'Subway Surfers: Zurich',
+                        unityVersion: '2019.4.18f1',
+                        unityWebglBuildUrl: 'ZurichNewPrivacy.json',
+                        fileSize: 36
+                    };
+                    window.mergedBlobUrls = {};
+                    window.assetsReady = false;
+                <\/script>
+                </head>
+                <body style="margin:0;overflow:hidden;background:#000">
+                    <script src="master-loader.js"><\/script>
+                </body>
+            </html>`, 
+            img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ_MM48rCJqhqfwkObjizWL1Oxwn4H8Ff9Gfw&s", 
+            tag: "#endless" 
+        },
+        { 
+            name: "Apple Shooter", 
+            isBlob: true, 
+            content: `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>Apple Shooter</title><style>html,body{margin:0;padding:0;background:black;overflow:hidden;height:100%;width:100%;}#flash-container{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:black;overflow:hidden;width:100%;height:100%;}ruffle-player{width:100%;height:100%;display:block;}</style><script src="https://cdn.jsdelivr.net/npm/@ruffle-rs/ruffle@0.2.0-nightly.2025.10.2/ruffle.min.js"><\/script></head><body><div id="flash-container"></div><script>window.addEventListener("DOMContentLoaded",()=>{const container=document.getElementById("flash-container");const ruffle=window.RufflePlayer?.newest()||window.RufflePlayer?.createPlayer();if(ruffle&&container){const player=ruffle.createPlayer();player.style.width="100%";player.style.height="100%";container.appendChild(player);player.load("https://cdn.jsdelivr.net/gh/bubbls/UGS-file-encryption@1f37cf6a092c693fd2be903099951609c686c83b/appleshooter.swf");}else{container.textContent="Ruffle failed to load.";}});<\/script></body></html>`, 
+            img: "https://www.onlinerealgames.com/games/apple-shooter/thumb_2.webp", 
+            tag: "#classic" 
+        },
+        { 
+            name: "Among Us", 
+            isBlob: true, 
+            content: `<!DOCTYPE html><html><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mamayaya1/game@f3a882424a8f28d07bdf456b251d889725c4c1e4/projects/among-us/style.css"/><style>body{margin:0;background:#000;overflow:hidden;}</style></head><body><script src="https://cdn.jsdelivr.net/gh/mamayaya1/game@f3a882424a8f28d07bdf456b251d889725c4c1e4/projects/among-us/scripts/supportcheck.js"><\/script><script src="https://cdn.jsdelivr.net/gh/mamayaya1/game@f3a882424a8f28d07bdf456b251d889725c4c1e4/projects/among-us/scripts/offlineclient.js" type="module"><\/script><script src="https://cdn.jsdelivr.net/gh/gahaden/ags@4f1a2b8755bcbf67ba043a7eca6c2e05d0b5bfe5/main.js" type="module"><\/script></body></html>`, 
+            img: "https://img.utdstc.com/icon/58d/ad7/58dad7ac070993e99d4c9f495898e5459c7aca5e133a1ff630468f1275f0d6fc:200", 
+            tag: "#survival" 
+        },
+        { 
+            name: "Blaze Drifter", 
+            isBlob: true, 
+            content: `<!DOCTYPE html><html><base href="https://cdn.jsdelivr.net/gh/cooldude2349/everything@main/blazedrift/"><head><meta charset="UTF-8"/><title>Blaze Drifter</title><style type="text/css">body{margin:0;background-color:black;}.game{position:absolute;top:0px;left:0px;margin:0px;border:0;width:100%;height:100%;overflow:hidden;display:block;}#display728x90{position:absolute;left:0px;right:0px;margin-left:auto;margin-right:auto;top:20px;width:728px;height:90px;display:none;}#display320x50{position:absolute;left:0px;right:0px;margin-left:auto;margin-right:auto;top:10px;width:320px;height:50px;display:none;}</style></head><body style="background:black"><canvas class="game" id="canvas" antialias="false" oncontextmenu="event.preventDefault()"></canvas><div id="display728x90"></div><div id="display320x50"></div><script type="text/javascript">var Module={preRun:[],postRun:[],print:(function(){return function(text){text=Array.prototype.slice.call(arguments).join(' ');console.log(text);};})(),printErr:function(text){text=Array.prototype.slice.call(arguments).join(' ');console.error(text);},canvas:(function(){var canvas=document.getElementById('canvas');canvas.addEventListener("webglcontextlost",function(e){alert('FIXME: WebGL context lost, please reload the page');e.preventDefault();},false);return canvas;})(),setStatus:function(text){},monitorRunDependencies:function(left){},};window.onerror=function(event){console.log("onerror: "+event.message);};window.addEventListener('click',ev=>{if(Module._OnClick)Module._OnClick(ev);},{passive:false});<\/script><script src="poki-sdk-edit3.js"><\/script><script async="false" type="text/javascript" src="moonbird.js"><\/script></body></html>`, 
+            img: "https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/aa36401385a23a7c1a8e1ed3023d2f37/blaze-drifter.png", 
+            tag: "#racing" 
+        },
+        { name: "Flappy Bird", url: "https://scratch.mit.edu/projects/17828009/embed", img: "https://upload.wikimedia.org/wikipedia/en/0/0a/Flappy_Bird_icon.png", tag: "#arcade" },
+        { 
+            name: "Drive Mad", 
+            isBlob: true, 
+            content: `<!DOCTYPE html><html lang="en-us"><head><base href="https://cdn.jsdelivr.net/gh/genizy/dmad-poki@49b5ab6b987f5f3be58f9dae59c92e8fc1aab9b0/"><script>window.assgdd={"ancestorOrigins":{"0":"https://games.poki.com","1":"https://poki.com"},"href":"https://poki.com/en/g/drive-mad","origin":"https://f9564e4e-ef25-4e4b-ba67-cb11a1576bbd.poki-gdn.com","protocol":"https:","host":"f9564e4e-ef25-4e4b-ba67-cb11a1576bbd.poki-gdn.com","hostname":"f9564e4e-ef25-4e4b-ba67-cb11a1576bbd.poki-gdn.com","pathname":"/cc1bc57a-e355-4696-97c2-097bf6188606/index.html"};<\/script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><link rel="stylesheet" href="webapp/fancade.css"><script src="poki-sdk.js"><\/script></head><body id="body"><div id="canvas_border" class="emscripten_border"><canvas class="emscripten" id="canvas" tabindex=-1 style="width:100%;height:100%"><\/canvas><\/div><script type="text/javascript" src="webapp/source_min.js"><\/script><script type="text/javascript" src="webapp/index.js"><\/script></body></html>`, 
+            img: "https://img.poki-cdn.com/cdn-cgi/image/q=78,scq=50,width=1200,height=1200,fit=cover,f=png/4abc77cf2ca8a1ca37416249429501f4/drive-mad.png", 
+            tag: "#racing" 
+        }
+    ];
+
+    const THEME_KEY = 'majesticOS_theme';
+
+    function setTheme(t, save = true) {
+        document.body.className = 'theme-' + t;
+        if (save) localStorage.setItem(THEME_KEY, t);
+    }
+
+    window.onload = function () {
+        setTheme(localStorage.getItem(THEME_KEY) || 'galaxy', false);
+        createStars();
+        renderGrid('apps-grid', apps);
+        renderGrid('games-grid', games);
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }, 1000);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') panic(); });
+    };
+
+    function unlockOS() {
+        document.getElementById('fake-login').style.display = 'none';
+        document.getElementById('majestic-os').style.display = 'flex';
+    }
+
+    function panic() {
+        document.getElementById('majestic-os').style.display = 'none';
+        closeViewer();
+        document.getElementById('fake-login').style.display = 'flex';
+    }
+
+    function switchTab(id, el) {
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+        document.getElementById('tab-' + id).classList.add('active');
+        document.querySelectorAll('.nav-item').forEach(s => s.classList.remove('active'));
+        if (el) el.classList.add('active');
+    }
+
+    function renderGrid(id, items) {
+        const c = document.getElementById(id);
+        if (!c) return;
+        c.innerHTML = '';
+        items.forEach(i => {
+            const d = document.createElement('div');
+            d.className = 'card';
+            d.innerHTML = `
+                <div class="card-image-container">
+                    <img src="${i.img}" class="card-icon" alt="${i.name}" onerror="this.onerror=null;this.src='https://placehold.co/400x400/1e293b/white?text=${encodeURIComponent(i.name)}';">
+                </div>
+                <div class="card-info">
+                    <div class="card-title">${i.name}</div>
+                    <div class="card-tag">${i.tag}</div>
+                </div>`;
+            d.onclick = () => {
+                document.getElementById('viewer-title').innerText = i.name;
+                if (i.isBlob) {
+                    const blob = new Blob([i.content], { type: 'text/html' });
+                    document.getElementById('main-iframe').src = URL.createObjectURL(blob);
+                } else {
+                    document.getElementById('main-iframe').src = i.url;
+                }
+                document.getElementById('iframe-viewer').style.display = 'flex';
+            };
+            c.appendChild(d);
+        });
+    }
+
+    function filterGrid(inputId, gridId) {
+        const filter = document.getElementById(inputId).value.toLowerCase();
+        for (let c of document.getElementById(gridId).getElementsByClassName('card')) {
+            c.style.display = c.querySelector('.card-title').innerText.toLowerCase().includes(filter) ? '' : 'none';
+        }
+    }
+
+    function closeViewer() {
+        document.getElementById('iframe-viewer').style.display = 'none';
+        if (document.getElementById('main-iframe').src.startsWith('blob:')) {
+            URL.revokeObjectURL(document.getElementById('main-iframe').src);
+        }
+        document.getElementById('main-iframe').src = 'about:blank';
+    }
+
+    function handleSearch(e) {
+        if (e.key !== 'Enter') return;
+        let url = e.target.value.trim();
+        if (!url.startsWith('http')) url = url.includes('.') ? 'https://' + url : 'https://www.google.com/search?q=' + encodeURIComponent(url);
+        document.getElementById('viewer-title').innerText = 'Browser';
+        document.getElementById('main-iframe').src = url;
+        document.getElementById('iframe-viewer').style.display = 'flex';
+    }
+
+    function createStars() {
+        const c = document.getElementById('stars-container');
+        for (let i = 0; i < 50; i++) {
+            const s = document.createElement('div');
+            s.className = 'star';
+            s.style.left = Math.random() * 100 + '%';
+            s.style.top = Math.random() * 100 + '%';
+            s.style.width = s.style.height = Math.random() * 3 + 1 + 'px';
+            s.style.setProperty('--duration', Math.random() * 3 + 2 + 's');
+            c.appendChild(s);
+        }
+    }
+</script>
+</body>
+</html>
